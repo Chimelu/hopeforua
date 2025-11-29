@@ -282,7 +282,7 @@ function DonatePageContent() {
               <form onSubmit={handleSubmit} className="space-y-6">
                 {/* Amount Selection */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-3">
+                  <label className="block text-sm font-medium text-white mb-3">
                     Select Amount (USD)
                   </label>
                   <div className="grid grid-cols-3 gap-3 mb-3">
@@ -293,8 +293,8 @@ function DonatePageContent() {
                         onClick={() => handleAmountClick(preset)}
                         className={`py-3 px-4 rounded-lg border-2 font-semibold transition-colors ${
                           amount === preset
-                            ? 'border-blue-600 bg-blue-50 text-blue-700'
-                            : 'border-gray-300 text-gray-700 hover:border-blue-400'
+                            ? 'border-yellow-400 bg-yellow-400 text-gray-900'
+                            : 'border-blue-700 bg-blue-700/50 text-white hover:border-yellow-400 hover:bg-blue-700'
                         }`}
                       >
                         ${preset}
@@ -302,7 +302,7 @@ function DonatePageContent() {
                     ))}
                   </div>
                   <div className="mt-3">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-white mb-2">
                       Or enter custom amount
                     </label>
                     <input
@@ -312,11 +312,11 @@ function DonatePageContent() {
                       value={customAmount}
                       onChange={(e) => handleCustomAmountChange(e.target.value)}
                       placeholder="Enter amount"
-                      className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-blue-600 focus:outline-none"
+                      className="w-full px-4 py-2 bg-white/90 border-2 border-blue-600 rounded-lg focus:border-yellow-400 focus:outline-none text-gray-900"
                     />
                   </div>
                   {(amount || customAmount) && (
-                    <p className="mt-3 text-lg font-semibold text-blue-600">
+                    <p className="mt-3 text-lg font-semibold text-yellow-400">
                       Amount: ${isCustom ? customAmount : amount}
                     </p>
                   )}
@@ -324,7 +324,7 @@ function DonatePageContent() {
 
                 {/* Payment Method Selection */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-3">
+                  <label className="block text-sm font-medium text-white mb-3">
                     Select Payment Method *
                   </label>
                   <div className="grid md:grid-cols-3 gap-4">
@@ -333,16 +333,16 @@ function DonatePageContent() {
                       onClick={() => setPaymentMethod('card')}
                       className={`p-4 rounded-lg border-2 transition-colors ${
                         paymentMethod === 'card'
-                          ? 'border-blue-600 bg-blue-50'
-                          : 'border-gray-300 hover:border-blue-400'
+                          ? 'border-yellow-400 bg-yellow-400/20'
+                          : 'border-blue-700 bg-blue-800/50 hover:border-yellow-400'
                       }`}
                     >
                       <div className="text-center">
-                        <svg className="w-12 h-12 mx-auto mb-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className={`w-12 h-12 mx-auto mb-2 ${paymentMethod === 'card' ? 'text-yellow-400' : 'text-blue-300'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
                         </svg>
-                        <div className="font-semibold text-gray-900">Credit/Debit Card</div>
-                        <div className="text-sm text-gray-500 mt-1">Visa, Mastercard, Amex</div>
+                        <div className={`font-semibold ${paymentMethod === 'card' ? 'text-white' : 'text-blue-100'}`}>Credit/Debit Card</div>
+                        <div className={`text-sm mt-1 ${paymentMethod === 'card' ? 'text-blue-200' : 'text-blue-300'}`}>Visa, Mastercard, Amex</div>
                       </div>
                     </button>
 
@@ -351,16 +351,16 @@ function DonatePageContent() {
                       onClick={() => setPaymentMethod('bank')}
                       className={`p-4 rounded-lg border-2 transition-colors ${
                         paymentMethod === 'bank'
-                          ? 'border-blue-600 bg-blue-50'
-                          : 'border-gray-300 hover:border-blue-400'
+                          ? 'border-yellow-400 bg-yellow-400/20'
+                          : 'border-blue-700 bg-blue-800/50 hover:border-yellow-400'
                       }`}
                     >
                       <div className="text-center">
-                        <svg className="w-12 h-12 mx-auto mb-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className={`w-12 h-12 mx-auto mb-2 ${paymentMethod === 'bank' ? 'text-yellow-400' : 'text-blue-300'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z" />
                         </svg>
-                        <div className="font-semibold text-gray-900">Bank Transfer</div>
-                        <div className="text-sm text-gray-500 mt-1">Wire transfer, ACH</div>
+                        <div className={`font-semibold ${paymentMethod === 'bank' ? 'text-white' : 'text-blue-100'}`}>Bank Transfer</div>
+                        <div className={`text-sm mt-1 ${paymentMethod === 'bank' ? 'text-blue-200' : 'text-blue-300'}`}>Wire transfer, ACH</div>
                       </div>
                     </button>
 
@@ -369,16 +369,16 @@ function DonatePageContent() {
                       onClick={() => setPaymentMethod('crypto')}
                       className={`p-4 rounded-lg border-2 transition-colors ${
                         paymentMethod === 'crypto'
-                          ? 'border-blue-600 bg-blue-50'
-                          : 'border-gray-300 hover:border-blue-400'
+                          ? 'border-yellow-400 bg-yellow-400/20'
+                          : 'border-blue-700 bg-blue-800/50 hover:border-yellow-400'
                       }`}
                     >
                       <div className="text-center">
-                        <svg className="w-12 h-12 mx-auto mb-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className={`w-12 h-12 mx-auto mb-2 ${paymentMethod === 'crypto' ? 'text-yellow-400' : 'text-blue-300'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
-                        <div className="font-semibold text-gray-900">Cryptocurrency</div>
-                        <div className="text-sm text-gray-500 mt-1">BTC, ETH, USDT, USDC</div>
+                        <div className={`font-semibold ${paymentMethod === 'crypto' ? 'text-white' : 'text-blue-100'}`}>Cryptocurrency</div>
+                        <div className={`text-sm mt-1 ${paymentMethod === 'crypto' ? 'text-blue-200' : 'text-blue-300'}`}>BTC, ETH, USDT, USDC</div>
                       </div>
                     </button>
                   </div>
@@ -386,41 +386,41 @@ function DonatePageContent() {
 
                 {/* Card Payment Form */}
                 {paymentMethod === 'card' && (
-                  <div className="p-4 bg-blue-50 rounded-lg border-2 border-blue-200">
+                  <div className="p-4 bg-white/90 rounded-lg border-2 border-yellow-400">
                     <h3 className="font-semibold text-gray-900 mb-4">Card Payment</h3>
                     <div className="space-y-4">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Card Number</label>
+                        <label className="block text-sm font-medium text-gray-900 mb-2">Card Number</label>
                         <input
                           type="text"
                           placeholder="1234 5678 9012 3456"
-                          className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-blue-600 focus:outline-none"
+                          className="w-full px-4 py-2 bg-white border-2 border-gray-300 rounded-lg focus:border-blue-600 focus:outline-none text-gray-900"
                         />
                       </div>
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">Expiry Date</label>
+                          <label className="block text-sm font-medium text-gray-900 mb-2">Expiry Date</label>
                           <input
                             type="text"
                             placeholder="MM/YY"
-                            className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-blue-600 focus:outline-none"
+                            className="w-full px-4 py-2 bg-white border-2 border-gray-300 rounded-lg focus:border-blue-600 focus:outline-none text-gray-900"
                           />
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">CVV</label>
+                          <label className="block text-sm font-medium text-gray-900 mb-2">CVV</label>
                           <input
                             type="text"
                             placeholder="123"
-                            className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-blue-600 focus:outline-none"
+                            className="w-full px-4 py-2 bg-white border-2 border-gray-300 rounded-lg focus:border-blue-600 focus:outline-none text-gray-900"
                           />
                         </div>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Cardholder Name</label>
+                        <label className="block text-sm font-medium text-gray-900 mb-2">Cardholder Name</label>
                         <input
                           type="text"
                           placeholder="John Doe"
-                          className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-blue-600 focus:outline-none"
+                          className="w-full px-4 py-2 bg-white border-2 border-gray-300 rounded-lg focus:border-blue-600 focus:outline-none text-gray-900"
                         />
                       </div>
                     </div>
@@ -429,54 +429,54 @@ function DonatePageContent() {
 
                 {/* Bank Transfer Details */}
                 {paymentMethod === 'bank' && (
-                  <div className="p-4 bg-blue-50 rounded-lg border-2 border-blue-200">
+                  <div className="p-4 bg-white/90 rounded-lg border-2 border-yellow-400">
                     <h3 className="font-semibold text-gray-900 mb-4">Bank Transfer Details</h3>
                     
                     <div className="mb-6">
                       <h4 className="font-medium text-gray-900 mb-3">USD Account</h4>
                       <div className="space-y-2 text-sm">
                         <div className="flex justify-between">
-                          <span className="text-gray-600">Account Name:</span>
-                          <span className="font-mono font-semibold">{bankAccounts.usd.accountName}</span>
+                          <span className="text-gray-700">Account Name:</span>
+                          <span className="font-mono font-semibold text-gray-900">{bankAccounts.usd.accountName}</span>
                         </div>
                         <div className="flex justify-between items-center">
-                          <span className="text-gray-600">Account Number:</span>
+                          <span className="text-gray-700">Account Number:</span>
                           <div className="flex items-center gap-2">
-                            <span className="font-mono font-semibold">{bankAccounts.usd.accountNumber}</span>
+                            <span className="font-mono font-semibold text-gray-900">{bankAccounts.usd.accountNumber}</span>
                             <button
                               type="button"
                               onClick={() => copyToClipboard(bankAccounts.usd.accountNumber, 'Account Number')}
-                              className="text-blue-600 hover:text-blue-700 text-xs"
+                              className="text-blue-600 hover:text-blue-700 text-xs font-semibold"
                             >
                               Copy
                             </button>
                           </div>
                         </div>
                         <div className="flex justify-between items-center">
-                          <span className="text-gray-600">Routing Number:</span>
+                          <span className="text-gray-700">Routing Number:</span>
                           <div className="flex items-center gap-2">
-                            <span className="font-mono font-semibold">{bankAccounts.usd.routingNumber}</span>
+                            <span className="font-mono font-semibold text-gray-900">{bankAccounts.usd.routingNumber}</span>
                             <button
                               type="button"
                               onClick={() => copyToClipboard(bankAccounts.usd.routingNumber, 'Routing Number')}
-                              className="text-blue-600 hover:text-blue-700 text-xs"
+                              className="text-blue-600 hover:text-blue-700 text-xs font-semibold"
                             >
                               Copy
                             </button>
                           </div>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-gray-600">Bank Name:</span>
-                          <span className="font-semibold">{bankAccounts.usd.bankName}</span>
+                          <span className="text-gray-700">Bank Name:</span>
+                          <span className="font-semibold text-gray-900">{bankAccounts.usd.bankName}</span>
                         </div>
                         <div className="flex justify-between items-center">
-                          <span className="text-gray-600">SWIFT:</span>
+                          <span className="text-gray-700">SWIFT:</span>
                           <div className="flex items-center gap-2">
-                            <span className="font-mono font-semibold">{bankAccounts.usd.swift}</span>
+                            <span className="font-mono font-semibold text-gray-900">{bankAccounts.usd.swift}</span>
                             <button
                               type="button"
                               onClick={() => copyToClipboard(bankAccounts.usd.swift, 'SWIFT Code')}
-                              className="text-blue-600 hover:text-blue-700 text-xs"
+                              className="text-blue-600 hover:text-blue-700 text-xs font-semibold"
                             >
                               Copy
                             </button>
@@ -486,7 +486,7 @@ function DonatePageContent() {
                     </div>
 
                     <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded">
-                      <p className="text-xs text-gray-700">
+                      <p className="text-xs text-gray-800">
                         <strong>Note:</strong> After making a bank transfer, please email us at donations@hopeforua.org 
                         with your transaction details. You can download our impact report from the Reports page.
                       </p>
@@ -496,76 +496,76 @@ function DonatePageContent() {
 
                 {/* Crypto Wallet Addresses */}
                 {paymentMethod === 'crypto' && (
-                  <div className="p-4 bg-blue-50 rounded-lg border-2 border-blue-200">
+                  <div className="p-4 bg-white/90 rounded-lg border-2 border-yellow-400">
                     <h3 className="font-semibold text-gray-900 mb-4">Cryptocurrency Wallet Addresses</h3>
                     <div className="space-y-4">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Bitcoin (BTC)</label>
+                        <label className="block text-sm font-medium text-gray-900 mb-2">Bitcoin (BTC)</label>
                         <div className="flex items-center gap-2">
                           <input
                             type="text"
                             value={cryptoWallets.bitcoin}
                             readOnly
-                            className="flex-1 px-4 py-2 bg-white border-2 border-gray-300 rounded-lg font-mono text-sm"
+                            className="flex-1 px-4 py-2 bg-white border-2 border-gray-300 rounded-lg font-mono text-sm text-gray-900"
                           />
                           <button
                             type="button"
                             onClick={() => copyToClipboard(cryptoWallets.bitcoin, 'Bitcoin address')}
-                            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm"
+                            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm font-semibold"
                           >
                             Copy
                           </button>
                         </div>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Ethereum (ETH)</label>
+                        <label className="block text-sm font-medium text-gray-900 mb-2">Ethereum (ETH)</label>
                         <div className="flex items-center gap-2">
                           <input
                             type="text"
                             value={cryptoWallets.ethereum}
                             readOnly
-                            className="flex-1 px-4 py-2 bg-white border-2 border-gray-300 rounded-lg font-mono text-sm"
+                            className="flex-1 px-4 py-2 bg-white border-2 border-gray-300 rounded-lg font-mono text-sm text-gray-900"
                           />
                           <button
                             type="button"
                             onClick={() => copyToClipboard(cryptoWallets.ethereum, 'Ethereum address')}
-                            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm"
+                            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm font-semibold"
                           >
                             Copy
                           </button>
                         </div>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">USDT (Tether)</label>
+                        <label className="block text-sm font-medium text-gray-900 mb-2">USDT (Tether)</label>
                         <div className="flex items-center gap-2">
                           <input
                             type="text"
                             value={cryptoWallets.usdt}
                             readOnly
-                            className="flex-1 px-4 py-2 bg-white border-2 border-gray-300 rounded-lg font-mono text-sm"
+                            className="flex-1 px-4 py-2 bg-white border-2 border-gray-300 rounded-lg font-mono text-sm text-gray-900"
                           />
                           <button
                             type="button"
                             onClick={() => copyToClipboard(cryptoWallets.usdt, 'USDT address')}
-                            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm"
+                            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm font-semibold"
                           >
                             Copy
                           </button>
                         </div>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">USDC (USD Coin)</label>
+                        <label className="block text-sm font-medium text-gray-900 mb-2">USDC (USD Coin)</label>
                         <div className="flex items-center gap-2">
                           <input
                             type="text"
                             value={cryptoWallets.usdc}
                             readOnly
-                            className="flex-1 px-4 py-2 bg-white border-2 border-gray-300 rounded-lg font-mono text-sm"
+                            className="flex-1 px-4 py-2 bg-white border-2 border-gray-300 rounded-lg font-mono text-sm text-gray-900"
                           />
                           <button
                             type="button"
                             onClick={() => copyToClipboard(cryptoWallets.usdc, 'USDC address')}
-                            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm"
+                            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm font-semibold"
                           >
                             Copy
                           </button>
@@ -573,7 +573,7 @@ function DonatePageContent() {
                       </div>
                     </div>
                     <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded">
-                      <p className="text-xs text-gray-700">
+                      <p className="text-xs text-gray-800">
                         <strong>Note:</strong> After sending cryptocurrency, please email us at donations@hopeforua.org 
                         with your transaction hash. You can download our impact report from the Reports page.
                       </p>
@@ -583,7 +583,7 @@ function DonatePageContent() {
 
                 {/* Donor Information */}
                 <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="name" className="block text-sm font-medium text-white mb-2">
                     Full Name *
                   </label>
                   <input
@@ -592,12 +592,12 @@ function DonatePageContent() {
                     required
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-blue-600 focus:outline-none"
+                    className="w-full px-4 py-2 bg-white/90 border-2 border-blue-600 rounded-lg focus:border-yellow-400 focus:outline-none text-gray-900"
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="email" className="block text-sm font-medium text-white mb-2">
                     Email Address *
                   </label>
                   <input
@@ -606,12 +606,12 @@ function DonatePageContent() {
                     required
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-blue-600 focus:outline-none"
+                    className="w-full px-4 py-2 bg-white/90 border-2 border-blue-600 rounded-lg focus:border-yellow-400 focus:outline-none text-gray-900"
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="message" className="block text-sm font-medium text-white mb-2">
                     Message (Optional)
                   </label>
                   <textarea
@@ -619,7 +619,7 @@ function DonatePageContent() {
                     rows={4}
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                    className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-blue-600 focus:outline-none"
+                    className="w-full px-4 py-2 bg-white/90 border-2 border-blue-600 rounded-lg focus:border-yellow-400 focus:outline-none text-gray-900"
                     placeholder="Leave a message with your donation..."
                   />
                 </div>
@@ -627,7 +627,7 @@ function DonatePageContent() {
                 <button
                   type="submit"
                   disabled={!amount && !customAmount && !paymentMethod}
-                  className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold text-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+                  className="w-full bg-yellow-400 text-gray-900 py-3 rounded-lg font-bold text-lg hover:bg-yellow-500 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
                 >
                   {paymentMethod === 'card' ? 'Complete Donation' : 'Confirm Donation Details'}
                 </button>
@@ -636,25 +636,25 @@ function DonatePageContent() {
 
             {/* Sidebar */}
             <div className="space-y-6">
-              <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-xl p-6 border border-white/50">
-                <h3 className="text-xl font-semibold text-gray-900 mb-4">
+              <div className="bg-blue-800/60 backdrop-blur-sm rounded-xl shadow-xl p-6 border border-blue-700/50">
+                <h3 className="text-xl font-semibold text-white mb-4">
                   Why Your Donation Matters
                 </h3>
-                <ul className="space-y-3 text-gray-600">
+                <ul className="space-y-3 text-blue-100">
                   <li className="flex items-start">
-                    <span className="text-blue-600 mr-2">•</span>
+                    <span className="text-yellow-400 mr-2">•</span>
                     <span>Direct support for individuals and families in need</span>
                   </li>
                   <li className="flex items-start">
-                    <span className="text-blue-600 mr-2">•</span>
+                    <span className="text-yellow-400 mr-2">•</span>
                     <span>Transparent use of funds with regular impact reports</span>
                   </li>
                   <li className="flex items-start">
-                    <span className="text-blue-600 mr-2">•</span>
+                    <span className="text-yellow-400 mr-2">•</span>
                     <span>Tax-deductible donations</span>
                   </li>
                   <li className="flex items-start">
-                    <span className="text-blue-600 mr-2">•</span>
+                    <span className="text-yellow-400 mr-2">•</span>
                     <span>Secure and safe payment processing</span>
                   </li>
                 </ul>
