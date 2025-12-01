@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
+import { toast } from 'react-toastify';
 
 /**
  * Footer styled like UNITED24 - dark background with contact info and newsletter
@@ -13,7 +14,7 @@ export default function Footer() {
     e.preventDefault();
     // Handle newsletter subscription
     console.log('Newsletter subscription:', email);
-    alert('Thank you for subscribing!');
+    toast.success('Thank you for subscribing!');
     setEmail('');
   };
 
