@@ -29,7 +29,7 @@ const faqs: FAQItem[] = [
   },
   {
     question: 'How do I update my donation information?',
-    answer: 'You can update your donation information by contacting our support team at support@hopeforua.org or by calling us at +1 (555) 123-4567. We can help you change your payment method, update your contact information, or modify your recurring donation schedule.',
+    answer: 'You can update your donation information by contacting our support team at hopeeforua@gmail.com or by calling us at +12136096521. We can help you change your payment method, update your contact information, or modify your recurring donation schedule.',
   },
   {
     question: 'What types of support does HopeForUA provide?',

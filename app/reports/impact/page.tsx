@@ -124,7 +124,7 @@ IMPACT METRICS
 - Projects Funded: ${Math.floor(report.totalAmount / 50000)}
 - Communities Reached: ${Math.floor(report.totalAmount / 500000)}
 
-For detailed financial statements, please contact: reports@hopeforua.org
+For detailed financial statements, please contact: hopeeforua@gmail.com
 
 © ${new Date().getFullYear()} HopeForUA Foundation. All rights reserved.
     `;
@@ -269,8 +269,8 @@ For detailed financial statements, please contact: reports@hopeforua.org
               <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
                 <p className="text-sm">
                   <strong>Need a custom report?</strong> Contact us at{' '}
-                  <a href="mailto:reports@hopeforua.org" className="text-blue-600 hover:underline">
-                    reports@hopeforua.org
+                  <a href="mailto:hopeeforua@gmail.com" className="text-blue-600 hover:underline">
+                    hopeeforua@gmail.com
                   </a>{' '}
                   for specific donation details or historical data.
                 </p>

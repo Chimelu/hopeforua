@@ -78,11 +78,11 @@ export default function ContactPage() {
                 </div>
                 <div>
                   <h3 className="text-lg font-bold text-white mb-2">Email</h3>
-                  <a href="mailto:info@hopeforua.org" className="text-yellow-400 hover:text-yellow-300 font-medium block mb-1">
-                    info@hopeforua.org
+                  <a href="mailto:hopeeforua@gmail.com" className="text-yellow-400 hover:text-yellow-300 font-medium block mb-1">
+                    hopeeforua@gmail.com
                   </a>
-                  <a href="mailto:support@hopeforua.org" className="text-yellow-400 hover:text-yellow-300 font-medium block">
-                    support@hopeforua.org
+                  <a href="mailto:hopeeforua@gmail.com" className="text-yellow-400 hover:text-yellow-300 font-medium block">
+                    hopeeforua@gmail.com
                   </a>
                 </div>
               </div>
@@ -98,8 +98,8 @@ export default function ContactPage() {
                 </div>
                 <div>
                   <h3 className="text-lg font-bold text-white mb-2">Phone</h3>
-                  <a href="tel:+15551234567" className="text-yellow-400 hover:text-yellow-300 font-medium block">
-                    +1 (555) 123-4567
+                  <a href="tel:+12136096521" className="text-yellow-400 hover:text-yellow-300 font-medium block">
+                    +12136096521
                   </a>
                 </div>
               </div>

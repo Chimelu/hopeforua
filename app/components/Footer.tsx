@@ -44,30 +44,30 @@ export default function Footer() {
               <div>
                 <p className="text-gray-500 text-sm uppercase mb-1">General Questions:</p>
                 <a 
-                  href="mailto:info@hopeforua.org" 
+                  href="mailto:hopeeforua@gmail.com" 
                   className="text-white hover:text-blue-400 transition-colors text-sm md:text-base"
                 >
-                  info@hopeforua.org
+                  hopeeforua@gmail.com
                 </a>
               </div>
               
               <div>
                 <p className="text-gray-500 text-sm uppercase mb-1">For Press:</p>
                 <a 
-                  href="mailto:press@hopeforua.org" 
+                  href="mailto:hopeeforua@gmail.com" 
                   className="text-white hover:text-blue-400 transition-colors text-sm md:text-base"
                 >
-                  press@hopeforua.org
+                  hopeeforua@gmail.com
                 </a>
               </div>
               
               <div>
                 <p className="text-gray-500 text-sm uppercase mb-1">For Partnership:</p>
                 <a 
-                  href="mailto:partnership@hopeforua.org" 
+                  href="mailto:hopeeforua@gmail.com" 
                   className="text-white hover:text-blue-400 transition-colors text-sm md:text-base"
                 >
-                  partnership@hopeforua.org
+                  hopeeforua@gmail.com
                 </a>
               </div>
             </div>

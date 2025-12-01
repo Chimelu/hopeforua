@@ -470,7 +470,7 @@ function DonatePageContent() {
 
                     <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded">
                       <p className="text-xs text-gray-800">
-                        <strong>Note:</strong> After making a bank transfer, please email us at donations@hopeforua.org 
+                        <strong>Note:</strong> After making a bank transfer, please email us at hopeeforua@gmail.com 
                         with your transaction details. You can download our impact report from the Reports page.
                       </p>
                     </div>
@@ -511,7 +511,7 @@ function DonatePageContent() {
                     )}
                     <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded">
                       <p className="text-xs text-gray-800">
-                        <strong>Note:</strong> After sending cryptocurrency, please email us at donations@hopeforua.org 
+                        <strong>Note:</strong> After sending cryptocurrency, please email us at hopeeforua@gmail.com 
                         with your transaction hash. You can download our impact report from the Reports page.
                       </p>
                     </div>
