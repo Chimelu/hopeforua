@@ -232,37 +232,76 @@ export default function AdminPage() {
             Donations for: {selectedProject.title}
           </h1>
 
-          <div className="bg-blue-800/60 backdrop-blur-sm rounded-xl shadow-xl p-8 border border-blue-700/50">
+          <div className="bg-blue-800/60 backdrop-blur-sm rounded-xl shadow-xl p-4 sm:p-8 border border-blue-700/50">
             {donations.length === 0 ? (
               <p className="text-blue-100 text-center py-8">No donations yet for this project.</p>
             ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-left">
-                  <thead>
-                    <tr className="border-b border-blue-700">
-                      <th className="pb-4 text-white font-semibold">Name</th>
-                      <th className="pb-4 text-white font-semibold">Email</th>
-                      <th className="pb-4 text-white font-semibold">Phone</th>
-                      <th className="pb-4 text-white font-semibold">Amount</th>
-                      <th className="pb-4 text-white font-semibold">Payment Method</th>
-                      <th className="pb-4 text-white font-semibold">Date</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {donations.map((donation) => (
-                      <tr key={donation._id} className="border-b border-blue-700/50">
-                        <td className="py-4 text-blue-100">{donation.name}</td>
-                        <td className="py-4 text-blue-100">{donation.email}</td>
-                        <td className="py-4 text-blue-100">{donation.phone}</td>
-                        <td className="py-4 text-yellow-400 font-semibold">{formatCurrency(donation.amount)}</td>
-                        <td className="py-4 text-blue-100 capitalize">{donation.paymentMethod}</td>
-                        <td className="py-4 text-blue-100">
-                          {new Date(donation.createdAt).toLocaleDateString()}
-                        </td>
+              <>
+                {/* Desktop Table View */}
+                <div className="hidden md:block overflow-x-auto">
+                  <table className="w-full text-left">
+                    <thead>
+                      <tr className="border-b border-blue-700">
+                        <th className="pb-4 text-white font-semibold">Name</th>
+                        <th className="pb-4 text-white font-semibold">Email</th>
+                        <th className="pb-4 text-white font-semibold">Phone</th>
+                        <th className="pb-4 text-white font-semibold">Amount</th>
+                        <th className="pb-4 text-white font-semibold">Payment Method</th>
+                        <th className="pb-4 text-white font-semibold">Date</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {donations.map((donation) => (
+                        <tr key={donation._id} className="border-b border-blue-700/50">
+                          <td className="py-4 text-blue-100">{donation.name}</td>
+                          <td className="py-4 text-blue-100">{donation.email}</td>
+                          <td className="py-4 text-blue-100">{donation.phone}</td>
+                          <td className="py-4 text-yellow-400 font-semibold">{formatCurrency(donation.amount)}</td>
+                          <td className="py-4 text-blue-100 capitalize">{donation.paymentMethod}</td>
+                          <td className="py-4 text-blue-100">
+                            {new Date(donation.createdAt).toLocaleDateString()}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Mobile Card View */}
+                <div className="md:hidden space-y-4">
+                  {donations.map((donation) => (
+                    <div key={donation._id} className="bg-blue-700/50 rounded-lg p-4 border border-blue-600/50">
+                      <div className="space-y-2">
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <p className="text-blue-200 text-xs mb-1">Name:</p>
+                            <p className="text-white font-semibold text-lg">{donation.name}</p>
+                            <p className="text-blue-200 text-xs mt-2">Email:</p>
+                            <p className="text-blue-200 text-sm">{donation.email}</p>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-blue-200 text-xs mb-1">Amount:</p>
+                            <p className="text-yellow-400 font-bold text-lg">{formatCurrency(donation.amount)}</p>
+                            <p className="text-blue-200 text-xs mt-2 capitalize">{donation.paymentMethod}</p>
+                          </div>
+                        </div>
+                        {donation.phone && (
+                          <div>
+                            <p className="text-blue-200 text-xs">Phone:</p>
+                            <p className="text-blue-200 text-sm">{donation.phone}</p>
+                          </div>
+                        )}
+                        <div>
+                          <p className="text-blue-200 text-xs">Date:</p>
+                          <p className="text-blue-300 text-xs">
+                            {new Date(donation.createdAt).toLocaleDateString()}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
                 <div className="mt-6 pt-6 border-t border-blue-700">
                   <p className="text-white text-lg">
                     <span className="font-semibold">Total Donations:</span>{' '}
@@ -274,7 +313,7 @@ export default function AdminPage() {
                     <span className="font-semibold">Total Donors:</span> {donations.length}
                   </p>
                 </div>
-              </div>
+              </>
             )}
           </div>
         </div>
