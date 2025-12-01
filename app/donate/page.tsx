@@ -72,32 +72,49 @@ function DonatePageContent() {
 
   const presetAmounts = ['25', '50', '100', '250', '500', '1000'];
 
-  // Bank account details (dummy)
-  const bankAccounts = {
-    usd: {
-      accountName: 'HopeForUA Foundation',
-      accountNumber: '1234567890',
-      routingNumber: '987654321',
-      bankName: 'International Trust Bank',
-      swift: 'ITBANKUS33',
-      iban: 'US33ITBK0000123456789012',
-    },
-    eur: {
-      accountName: 'HopeForUA Foundation',
-      accountNumber: 'EU9876543210',
-      bankName: 'European Union Bank',
-      swift: 'EUBANKDE33',
-      iban: 'DE89370400440532013000',
-    },
-  };
+  const [paymentDetails, setPaymentDetails] = useState<{
+    bank: Array<{
+      _id: string;
+      currency: string;
+      accountName: string;
+      accountNumber: string;
+      routingNumber: string;
+      bankName: string;
+      swift: string;
+      iban: string;
+    }>;
+    crypto: Array<{
+      _id: string;
+      currency: string;
+      walletAddress: string;
+      network: string;
+    }>;
+  }>({
+    bank: [],
+    crypto: [],
+  });
 
-  // Crypto wallet addresses (dummy)
-  const cryptoWallets = {
-    bitcoin: 'bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh',
-    ethereum: '0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb5',
-    usdt: '0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb5',
-    usdc: '0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb5',
-  };
+  useEffect(() => {
+    // Fetch payment details from API (only active ones)
+    const fetchPaymentDetails = async () => {
+      try {
+        const response = await fetch('/api/payment-details?activeOnly=true');
+        const data = await response.json();
+        if (data.paymentDetails) {
+          const bankDetails = data.paymentDetails.filter((pd: any) => pd.type === 'bank');
+          const cryptoDetails = data.paymentDetails.filter((pd: any) => pd.type === 'crypto');
+          setPaymentDetails({
+            bank: bankDetails,
+            crypto: cryptoDetails,
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching payment details:', error);
+      }
+    };
+
+    fetchPaymentDetails();
+  }, []);
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -365,58 +382,91 @@ function DonatePageContent() {
                   <div className="p-4 bg-white/90 rounded-lg border-2 border-yellow-400">
                     <h3 className="font-semibold text-gray-900 mb-4">Bank Transfer Details</h3>
                     
-                    <div className="mb-6">
-                      <h4 className="font-medium text-gray-900 mb-3">USD Account</h4>
-                      <div className="space-y-2 text-sm">
-                        <div className="flex justify-between">
-                          <span className="text-gray-700">Account Name:</span>
-                          <span className="font-mono font-semibold text-gray-900">{bankAccounts.usd.accountName}</span>
-                        </div>
-                        <div className="flex justify-between items-center">
-                          <span className="text-gray-700">Account Number:</span>
-                          <div className="flex items-center gap-2">
-                            <span className="font-mono font-semibold text-gray-900">{bankAccounts.usd.accountNumber}</span>
-                            <button
-                              type="button"
-                              onClick={() => copyToClipboard(bankAccounts.usd.accountNumber, 'Account Number')}
-                              className="text-blue-600 hover:text-blue-700 text-xs font-semibold"
-                            >
-                              Copy
-                            </button>
+                    {paymentDetails.bank.length === 0 ? (
+                      <p className="text-gray-600 text-sm">No bank account details available. Please contact support.</p>
+                    ) : (
+                      <div className="space-y-6">
+                        {paymentDetails.bank.map((bank) => (
+                          <div key={bank._id} className="mb-6">
+                            <h4 className="font-medium text-gray-900 mb-3">{bank.currency.toUpperCase()} Account</h4>
+                            <div className="space-y-2 text-sm">
+                              {bank.accountName && (
+                                <div className="flex justify-between">
+                                  <span className="text-gray-700">Account Name:</span>
+                                  <span className="font-mono font-semibold text-gray-900">{bank.accountName}</span>
+                                </div>
+                              )}
+                              {bank.accountNumber && (
+                                <div className="flex justify-between items-center">
+                                  <span className="text-gray-700">Account Number:</span>
+                                  <div className="flex items-center gap-2">
+                                    <span className="font-mono font-semibold text-gray-900">{bank.accountNumber}</span>
+                                    <button
+                                      type="button"
+                                      onClick={() => copyToClipboard(bank.accountNumber, 'Account Number')}
+                                      className="text-blue-600 hover:text-blue-700 text-xs font-semibold"
+                                    >
+                                      Copy
+                                    </button>
+                                  </div>
+                                </div>
+                              )}
+                              {bank.routingNumber && (
+                                <div className="flex justify-between items-center">
+                                  <span className="text-gray-700">Routing Number:</span>
+                                  <div className="flex items-center gap-2">
+                                    <span className="font-mono font-semibold text-gray-900">{bank.routingNumber}</span>
+                                    <button
+                                      type="button"
+                                      onClick={() => copyToClipboard(bank.routingNumber, 'Routing Number')}
+                                      className="text-blue-600 hover:text-blue-700 text-xs font-semibold"
+                                    >
+                                      Copy
+                                    </button>
+                                  </div>
+                                </div>
+                              )}
+                              {bank.bankName && (
+                                <div className="flex justify-between">
+                                  <span className="text-gray-700">Bank Name:</span>
+                                  <span className="font-semibold text-gray-900">{bank.bankName}</span>
+                                </div>
+                              )}
+                              {bank.swift && (
+                                <div className="flex justify-between items-center">
+                                  <span className="text-gray-700">SWIFT:</span>
+                                  <div className="flex items-center gap-2">
+                                    <span className="font-mono font-semibold text-gray-900">{bank.swift}</span>
+                                    <button
+                                      type="button"
+                                      onClick={() => copyToClipboard(bank.swift, 'SWIFT Code')}
+                                      className="text-blue-600 hover:text-blue-700 text-xs font-semibold"
+                                    >
+                                      Copy
+                                    </button>
+                                  </div>
+                                </div>
+                              )}
+                              {bank.iban && (
+                                <div className="flex justify-between items-center">
+                                  <span className="text-gray-700">IBAN:</span>
+                                  <div className="flex items-center gap-2">
+                                    <span className="font-mono font-semibold text-gray-900">{bank.iban}</span>
+                                    <button
+                                      type="button"
+                                      onClick={() => copyToClipboard(bank.iban, 'IBAN')}
+                                      className="text-blue-600 hover:text-blue-700 text-xs font-semibold"
+                                    >
+                                      Copy
+                                    </button>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
                           </div>
-                        </div>
-                        <div className="flex justify-between items-center">
-                          <span className="text-gray-700">Routing Number:</span>
-                          <div className="flex items-center gap-2">
-                            <span className="font-mono font-semibold text-gray-900">{bankAccounts.usd.routingNumber}</span>
-                            <button
-                              type="button"
-                              onClick={() => copyToClipboard(bankAccounts.usd.routingNumber, 'Routing Number')}
-                              className="text-blue-600 hover:text-blue-700 text-xs font-semibold"
-                            >
-                              Copy
-                            </button>
-                          </div>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-700">Bank Name:</span>
-                          <span className="font-semibold text-gray-900">{bankAccounts.usd.bankName}</span>
-                        </div>
-                        <div className="flex justify-between items-center">
-                          <span className="text-gray-700">SWIFT:</span>
-                          <div className="flex items-center gap-2">
-                            <span className="font-mono font-semibold text-gray-900">{bankAccounts.usd.swift}</span>
-                            <button
-                              type="button"
-                              onClick={() => copyToClipboard(bankAccounts.usd.swift, 'SWIFT Code')}
-                              className="text-blue-600 hover:text-blue-700 text-xs font-semibold"
-                            >
-                              Copy
-                            </button>
-                          </div>
-                        </div>
+                        ))}
                       </div>
-                    </div>
+                    )}
 
                     <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded">
                       <p className="text-xs text-gray-800">
@@ -431,80 +481,34 @@ function DonatePageContent() {
                 {paymentMethod === 'crypto' && (
                   <div className="p-4 bg-white/90 rounded-lg border-2 border-yellow-400">
                     <h3 className="font-semibold text-gray-900 mb-4">Cryptocurrency Wallet Addresses</h3>
-                    <div className="space-y-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-900 mb-2">Bitcoin (BTC)</label>
-                        <div className="flex items-center gap-2">
-                          <input
-                            type="text"
-                            value={cryptoWallets.bitcoin}
-                            readOnly
-                            className="flex-1 px-4 py-2 bg-white border-2 border-gray-300 rounded-lg font-mono text-sm text-gray-900"
-                          />
-                          <button
-                            type="button"
-                            onClick={() => copyToClipboard(cryptoWallets.bitcoin, 'Bitcoin address')}
-                            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm font-semibold"
-                          >
-                            Copy
-                          </button>
-                        </div>
+                    {paymentDetails.crypto.length === 0 ? (
+                      <p className="text-gray-600 text-sm">No cryptocurrency wallet addresses available. Please contact support.</p>
+                    ) : (
+                      <div className="space-y-4">
+                        {paymentDetails.crypto.map((crypto) => (
+                          <div key={crypto._id}>
+                            <label className="block text-sm font-medium text-gray-900 mb-2">
+                              {crypto.currency} {crypto.network && `(${crypto.network})`}
+                            </label>
+                            <div className="flex items-center gap-2">
+                              <input
+                                type="text"
+                                value={crypto.walletAddress}
+                                readOnly
+                                className="flex-1 px-4 py-2 bg-white border-2 border-gray-300 rounded-lg font-mono text-sm text-gray-900"
+                              />
+                              <button
+                                type="button"
+                                onClick={() => copyToClipboard(crypto.walletAddress, `${crypto.currency} address`)}
+                                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm font-semibold"
+                              >
+                                Copy
+                              </button>
+                            </div>
+                          </div>
+                        ))}
                       </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-900 mb-2">Ethereum (ETH)</label>
-                        <div className="flex items-center gap-2">
-                          <input
-                            type="text"
-                            value={cryptoWallets.ethereum}
-                            readOnly
-                            className="flex-1 px-4 py-2 bg-white border-2 border-gray-300 rounded-lg font-mono text-sm text-gray-900"
-                          />
-                          <button
-                            type="button"
-                            onClick={() => copyToClipboard(cryptoWallets.ethereum, 'Ethereum address')}
-                            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm font-semibold"
-                          >
-                            Copy
-                          </button>
-                        </div>
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-900 mb-2">USDT (Tether)</label>
-                        <div className="flex items-center gap-2">
-                          <input
-                            type="text"
-                            value={cryptoWallets.usdt}
-                            readOnly
-                            className="flex-1 px-4 py-2 bg-white border-2 border-gray-300 rounded-lg font-mono text-sm text-gray-900"
-                          />
-                          <button
-                            type="button"
-                            onClick={() => copyToClipboard(cryptoWallets.usdt, 'USDT address')}
-                            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm font-semibold"
-                          >
-                            Copy
-                          </button>
-                        </div>
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-900 mb-2">USDC (USD Coin)</label>
-                        <div className="flex items-center gap-2">
-                          <input
-                            type="text"
-                            value={cryptoWallets.usdc}
-                            readOnly
-                            className="flex-1 px-4 py-2 bg-white border-2 border-gray-300 rounded-lg font-mono text-sm text-gray-900"
-                          />
-                          <button
-                            type="button"
-                            onClick={() => copyToClipboard(cryptoWallets.usdc, 'USDC address')}
-                            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm font-semibold"
-                          >
-                            Copy
-                          </button>
-                        </div>
-                      </div>
-                    </div>
+                    )}
                     <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded">
                       <p className="text-xs text-gray-800">
                         <strong>Note:</strong> After sending cryptocurrency, please email us at donations@hopeforua.org 

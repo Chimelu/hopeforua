@@ -29,6 +29,21 @@ interface Donation {
   createdAt: string;
 }
 
+interface PaymentDetail {
+  _id: string;
+  type: 'bank' | 'crypto';
+  currency?: string;
+  accountName?: string;
+  accountNumber?: string;
+  routingNumber?: string;
+  bankName?: string;
+  swift?: string;
+  iban?: string;
+  walletAddress?: string;
+  network?: string;
+  isActive: boolean;
+}
+
 export default function AdminPage() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
@@ -37,6 +52,10 @@ export default function AdminPage() {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [donations, setDonations] = useState<Donation[]>([]);
   const [showDonations, setShowDonations] = useState(false);
+  const [showPaymentDetails, setShowPaymentDetails] = useState(false);
+  const [paymentDetails, setPaymentDetails] = useState<PaymentDetail[]>([]);
+  const [editingPaymentDetail, setEditingPaymentDetail] = useState<PaymentDetail | null>(null);
+  const [showPaymentForm, setShowPaymentForm] = useState(false);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -48,11 +67,36 @@ export default function AdminPage() {
     status: 'active' as 'active' | 'completed',
   });
 
+  const [paymentFormData, setPaymentFormData] = useState({
+    type: 'bank' as 'bank' | 'crypto',
+    currency: '',
+    accountName: '',
+    accountNumber: '',
+    routingNumber: '',
+    bankName: '',
+    swift: '',
+    iban: '',
+    walletAddress: '',
+    network: '',
+    isActive: true,
+  });
+
   const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     fetchProjects();
+    fetchPaymentDetails();
   }, []);
+
+  const fetchPaymentDetails = async () => {
+    try {
+      const response = await fetch('/api/payment-details');
+      const data = await response.json();
+      setPaymentDetails(data.paymentDetails || []);
+    } catch (error) {
+      console.error('Error fetching payment details:', error);
+    }
+  };
 
   const fetchProjects = async () => {
     try {
@@ -187,6 +231,94 @@ export default function AdminPage() {
     setShowForm(false);
   };
 
+  const resetPaymentForm = () => {
+    setPaymentFormData({
+      type: 'bank',
+      currency: '',
+      accountName: '',
+      accountNumber: '',
+      routingNumber: '',
+      bankName: '',
+      swift: '',
+      iban: '',
+      walletAddress: '',
+      network: '',
+      isActive: true,
+    });
+    setEditingPaymentDetail(null);
+    setShowPaymentForm(false);
+  };
+
+  const handleEditPaymentDetail = (paymentDetail: PaymentDetail) => {
+    setEditingPaymentDetail(paymentDetail);
+    setPaymentFormData({
+      type: paymentDetail.type,
+      currency: paymentDetail.currency || '',
+      accountName: paymentDetail.accountName || '',
+      accountNumber: paymentDetail.accountNumber || '',
+      routingNumber: paymentDetail.routingNumber || '',
+      bankName: paymentDetail.bankName || '',
+      swift: paymentDetail.swift || '',
+      iban: paymentDetail.iban || '',
+      walletAddress: paymentDetail.walletAddress || '',
+      network: paymentDetail.network || '',
+      isActive: paymentDetail.isActive,
+    });
+    setShowPaymentForm(true);
+  };
+
+  const handleDeletePaymentDetail = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this payment detail?')) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/payment-details/${id}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        await fetchPaymentDetails();
+        toast.success('Payment detail deleted successfully!');
+      } else {
+        toast.error('Failed to delete payment detail');
+      }
+    } catch (error) {
+      console.error('Error deleting payment detail:', error);
+      toast.error('Failed to delete payment detail');
+    }
+  };
+
+  const handlePaymentFormSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const url = editingPaymentDetail
+        ? `/api/payment-details/${editingPaymentDetail._id}`
+        : '/api/payment-details';
+      const method = editingPaymentDetail ? 'PUT' : 'POST';
+
+      const response = await fetch(url, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(paymentFormData),
+      });
+
+      if (response.ok) {
+        await fetchPaymentDetails();
+        resetPaymentForm();
+        toast.success(editingPaymentDetail ? 'Payment detail updated successfully!' : 'Payment detail created successfully!');
+      } else {
+        const error = await response.json();
+        toast.error(error.error || 'Failed to save payment detail');
+      }
+    } catch (error) {
+      console.error('Error saving payment detail:', error);
+      toast.error('Failed to save payment detail');
+    }
+  };
+
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
@@ -316,6 +448,312 @@ export default function AdminPage() {
               </>
             )}
           </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (showPaymentForm) {
+    return (
+      <div className="min-h-screen bg-blue-900 relative overflow-hidden py-12">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-blue-800 rounded-full blur-3xl opacity-20"></div>
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-700 rounded-full blur-3xl opacity-20"></div>
+        
+        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <button
+            onClick={resetPaymentForm}
+            className="mb-8 text-white hover:text-yellow-400 font-semibold inline-flex items-center text-lg bg-blue-800/60 backdrop-blur-sm px-4 py-2 rounded-lg shadow-md hover:shadow-lg transition-all"
+          >
+            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+            Back to Payment Details
+          </button>
+
+          <div className="bg-blue-800/60 backdrop-blur-sm rounded-xl shadow-xl p-8 border border-blue-700/50">
+            <h1 className="text-3xl font-bold text-white mb-8">
+              {editingPaymentDetail ? 'Edit Payment Details' : 'Create Payment Details'}
+            </h1>
+
+            <form onSubmit={handlePaymentFormSubmit} className="space-y-6">
+              <div>
+                <label className="block text-sm font-medium text-white mb-2">
+                  Type *
+                </label>
+                <select
+                  required
+                  value={paymentFormData.type}
+                  onChange={(e) => setPaymentFormData({ ...paymentFormData, type: e.target.value as 'bank' | 'crypto' })}
+                  className="w-full px-4 py-2 bg-white/90 border-2 border-blue-600 rounded-lg focus:border-yellow-400 focus:outline-none text-gray-900"
+                >
+                  <option value="bank">Bank Transfer</option>
+                  <option value="crypto">Cryptocurrency</option>
+                </select>
+              </div>
+
+              {paymentFormData.type === 'bank' ? (
+                <>
+                  <div>
+                    <label className="block text-sm font-medium text-white mb-2">
+                      Currency (e.g., USD, EUR) *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={paymentFormData.currency}
+                      onChange={(e) => setPaymentFormData({ ...paymentFormData, currency: e.target.value })}
+                      placeholder="USD"
+                      className="w-full px-4 py-2 bg-white/90 border-2 border-blue-600 rounded-lg focus:border-yellow-400 focus:outline-none text-gray-900"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-white mb-2">
+                      Account Name *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={paymentFormData.accountName}
+                      onChange={(e) => setPaymentFormData({ ...paymentFormData, accountName: e.target.value })}
+                      className="w-full px-4 py-2 bg-white/90 border-2 border-blue-600 rounded-lg focus:border-yellow-400 focus:outline-none text-gray-900"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-white mb-2">
+                      Account Number *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={paymentFormData.accountNumber}
+                      onChange={(e) => setPaymentFormData({ ...paymentFormData, accountNumber: e.target.value })}
+                      className="w-full px-4 py-2 bg-white/90 border-2 border-blue-600 rounded-lg focus:border-yellow-400 focus:outline-none text-gray-900"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-white mb-2">
+                      Routing Number
+                    </label>
+                    <input
+                      type="text"
+                      value={paymentFormData.routingNumber}
+                      onChange={(e) => setPaymentFormData({ ...paymentFormData, routingNumber: e.target.value })}
+                      className="w-full px-4 py-2 bg-white/90 border-2 border-blue-600 rounded-lg focus:border-yellow-400 focus:outline-none text-gray-900"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-white mb-2">
+                      Bank Name
+                    </label>
+                    <input
+                      type="text"
+                      value={paymentFormData.bankName}
+                      onChange={(e) => setPaymentFormData({ ...paymentFormData, bankName: e.target.value })}
+                      className="w-full px-4 py-2 bg-white/90 border-2 border-blue-600 rounded-lg focus:border-yellow-400 focus:outline-none text-gray-900"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-white mb-2">
+                      SWIFT Code
+                    </label>
+                    <input
+                      type="text"
+                      value={paymentFormData.swift}
+                      onChange={(e) => setPaymentFormData({ ...paymentFormData, swift: e.target.value })}
+                      className="w-full px-4 py-2 bg-white/90 border-2 border-blue-600 rounded-lg focus:border-yellow-400 focus:outline-none text-gray-900"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-white mb-2">
+                      IBAN
+                    </label>
+                    <input
+                      type="text"
+                      value={paymentFormData.iban}
+                      onChange={(e) => setPaymentFormData({ ...paymentFormData, iban: e.target.value })}
+                      className="w-full px-4 py-2 bg-white/90 border-2 border-blue-600 rounded-lg focus:border-yellow-400 focus:outline-none text-gray-900"
+                    />
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div>
+                    <label className="block text-sm font-medium text-white mb-2">
+                      Currency/Network (e.g., Bitcoin, Ethereum, USDT) *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={paymentFormData.currency}
+                      onChange={(e) => setPaymentFormData({ ...paymentFormData, currency: e.target.value })}
+                      placeholder="Bitcoin"
+                      className="w-full px-4 py-2 bg-white/90 border-2 border-blue-600 rounded-lg focus:border-yellow-400 focus:outline-none text-gray-900"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-white mb-2">
+                      Wallet Address *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={paymentFormData.walletAddress}
+                      onChange={(e) => setPaymentFormData({ ...paymentFormData, walletAddress: e.target.value })}
+                      className="w-full px-4 py-2 bg-white/90 border-2 border-blue-600 rounded-lg focus:border-yellow-400 focus:outline-none text-gray-900"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-white mb-2">
+                      Network (e.g., BTC, ETH, ERC20)
+                    </label>
+                    <input
+                      type="text"
+                      value={paymentFormData.network}
+                      onChange={(e) => setPaymentFormData({ ...paymentFormData, network: e.target.value })}
+                      className="w-full px-4 py-2 bg-white/90 border-2 border-blue-600 rounded-lg focus:border-yellow-400 focus:outline-none text-gray-900"
+                    />
+                  </div>
+                </>
+              )}
+
+              <div>
+                <label className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={paymentFormData.isActive}
+                    onChange={(e) => setPaymentFormData({ ...paymentFormData, isActive: e.target.checked })}
+                    className="w-4 h-4 text-yellow-400 bg-gray-100 border-gray-300 rounded focus:ring-yellow-400"
+                  />
+                  <span className="text-white">Active</span>
+                </label>
+              </div>
+
+              <div className="flex gap-4">
+                <button
+                  type="submit"
+                  className="flex-1 bg-yellow-400 hover:bg-yellow-500 text-gray-900 py-3 rounded-lg font-bold text-lg transition-colors"
+                >
+                  {editingPaymentDetail ? 'Update Payment Details' : 'Create Payment Details'}
+                </button>
+                <button
+                  type="button"
+                  onClick={resetPaymentForm}
+                  className="px-6 bg-blue-700 hover:bg-blue-600 text-white py-3 rounded-lg font-semibold transition-colors"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (showPaymentDetails) {
+    return (
+      <div className="min-h-screen bg-blue-900 relative overflow-hidden py-12">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-blue-800 rounded-full blur-3xl opacity-20"></div>
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-700 rounded-full blur-3xl opacity-20"></div>
+        
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <button
+            onClick={() => setShowPaymentDetails(false)}
+            className="mb-8 text-white hover:text-yellow-400 font-semibold inline-flex items-center text-lg bg-blue-800/60 backdrop-blur-sm px-4 py-2 rounded-lg shadow-md hover:shadow-lg transition-all"
+          >
+            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+            Back to Dashboard
+          </button>
+
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+            <h1 className="text-4xl md:text-5xl font-bold text-white">
+              Payment Details
+            </h1>
+            <button
+              onClick={() => setShowPaymentForm(true)}
+              className="w-full sm:w-auto bg-yellow-400 hover:bg-yellow-500 text-gray-900 px-6 py-3 rounded-lg font-bold text-lg transition-colors shadow-lg"
+            >
+              + Add Payment Details
+            </button>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-6">
+            {paymentDetails.map((detail) => (
+              <div key={detail._id} className="bg-blue-800/60 backdrop-blur-sm rounded-xl shadow-xl p-6 border border-blue-700/50">
+                <div className="flex justify-between items-start mb-4">
+                  <div>
+                    <span className={`px-3 py-1 rounded-full text-xs font-semibold uppercase ${
+                      detail.type === 'bank' ? 'bg-blue-500' : 'bg-purple-500'
+                    } text-white`}>
+                      {detail.type}
+                    </span>
+                    {detail.currency && (
+                      <span className="ml-2 text-yellow-400 font-semibold">{detail.currency.toUpperCase()}</span>
+                    )}
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => handleEditPaymentDetail(detail)}
+                      className="text-yellow-400 hover:text-yellow-500"
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L15.232 5.232z" />
+                      </svg>
+                    </button>
+                    <button
+                      onClick={() => handleDeletePaymentDetail(detail._id)}
+                      className="text-red-400 hover:text-red-500"
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+
+                {detail.type === 'bank' ? (
+                  <div className="space-y-2 text-sm">
+                    {detail.accountName && <p><span className="text-blue-200">Account Name:</span> <span className="text-white">{detail.accountName}</span></p>}
+                    {detail.accountNumber && <p><span className="text-blue-200">Account Number:</span> <span className="text-white font-mono">{detail.accountNumber}</span></p>}
+                    {detail.routingNumber && <p><span className="text-blue-200">Routing Number:</span> <span className="text-white font-mono">{detail.routingNumber}</span></p>}
+                    {detail.bankName && <p><span className="text-blue-200">Bank Name:</span> <span className="text-white">{detail.bankName}</span></p>}
+                    {detail.swift && <p><span className="text-blue-200">SWIFT:</span> <span className="text-white font-mono">{detail.swift}</span></p>}
+                    {detail.iban && <p><span className="text-blue-200">IBAN:</span> <span className="text-white font-mono">{detail.iban}</span></p>}
+                  </div>
+                ) : (
+                  <div className="space-y-2 text-sm">
+                    {detail.walletAddress && (
+                      <div>
+                        <p className="text-blue-200 mb-1">Wallet Address:</p>
+                        <p className="text-white font-mono break-all">{detail.walletAddress}</p>
+                      </div>
+                    )}
+                    {detail.network && <p><span className="text-blue-200">Network:</span> <span className="text-white">{detail.network}</span></p>}
+                  </div>
+                )}
+
+                <div className="mt-4 pt-4 border-t border-blue-700">
+                  <span className={`text-xs ${detail.isActive ? 'text-green-400' : 'text-gray-400'}`}>
+                    {detail.isActive ? 'Active' : 'Inactive'}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {paymentDetails.length === 0 && (
+            <div className="text-center py-16">
+              <p className="text-blue-100 text-xl mb-4">No payment details yet.</p>
+              <button
+                onClick={() => setShowPaymentForm(true)}
+                className="bg-yellow-400 hover:bg-yellow-500 text-gray-900 px-6 py-3 rounded-lg font-bold text-lg transition-colors"
+              >
+                Create Your First Payment Details
+              </button>
+            </div>
+          )}
         </div>
       </div>
     );
@@ -516,12 +954,20 @@ export default function AdminPage() {
               Manage donation projects and view donor information
             </p>
           </div>
-          <button
-            onClick={() => setShowForm(true)}
-            className="w-full sm:w-auto bg-yellow-400 hover:bg-yellow-500 text-gray-900 px-6 py-3 rounded-lg font-bold text-lg transition-colors shadow-lg"
-          >
-            + Create Project
-          </button>
+          <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+            <button
+              onClick={() => setShowPaymentDetails(true)}
+              className="w-full sm:w-auto bg-blue-700 hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-bold text-lg transition-colors shadow-lg"
+            >
+              Payment Details
+            </button>
+            <button
+              onClick={() => setShowForm(true)}
+              className="w-full sm:w-auto bg-yellow-400 hover:bg-yellow-500 text-gray-900 px-6 py-3 rounded-lg font-bold text-lg transition-colors shadow-lg"
+            >
+              + Create Project
+            </button>
+          </div>
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
