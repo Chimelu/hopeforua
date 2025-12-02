@@ -189,6 +189,26 @@ function DonatePageContent() {
       });
 
       if (response.ok) {
+        // Send donation confirmation email
+        try {
+          await fetch('/api/send-email', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              type: 'donation',
+              donorEmail: formData.email,
+              donorName: formData.name,
+              amount: Number(donationAmount),
+              paymentMethod: paymentMethod,
+            }),
+          });
+        } catch (emailError) {
+          console.error('Error sending donation confirmation email:', emailError);
+          // Don't fail the donation if email fails
+        }
+
         toast.success('Thank you for your donation! Your contribution has been recorded.');
         // Reset form
         setAmount('');

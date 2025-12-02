@@ -10,12 +10,31 @@ import { toast } from 'react-toastify';
 export default function Footer() {
   const [email, setEmail] = useState('');
 
-  const handleNewsletterSubmit = (e: React.FormEvent) => {
+  const handleNewsletterSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     // Handle newsletter subscription
-    console.log('Newsletter subscription:', email);
-    toast.success('Thank you for subscribing!');
-    setEmail('');
+    try {
+      const response = await fetch('/api/send-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          type: 'newsletter',
+          subscriberEmail: email,
+        }),
+      });
+
+      if (response.ok) {
+        toast.success('Thank you for subscribing!');
+        setEmail('');
+      } else {
+        toast.error('Failed to subscribe. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error subscribing to newsletter:', error);
+      toast.error('Failed to subscribe. Please try again.');
+    }
   };
 
   return (
