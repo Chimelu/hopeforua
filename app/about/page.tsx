@@ -2,6 +2,8 @@
  * About page - Clean, readable text-focused design with detailed content
  * Enhanced with mature background styles and appealing typography
  */
+import Image from 'next/image';
+
 export default function AboutPage() {
   return (
     <div className="min-h-screen bg-blue-900 relative overflow-hidden">
@@ -29,6 +31,91 @@ export default function AboutPage() {
             About HopeForUA
           </h1>
           <div className="w-24 h-1 bg-yellow-400"></div>
+        </div>
+
+        {/* Video Section - First to play */}
+        <div className="mb-20">
+          <div className="relative w-full rounded-2xl overflow-hidden shadow-2xl border-2 border-blue-700/50 bg-black">
+            <video
+              autoPlay
+              muted
+              loop
+              playsInline
+              className="w-full h-auto"
+              controls
+            >
+              <source src="/donationvid.mp4" type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+          </div>
+        </div>
+
+        {/* Image Gallery Section - 5 pictures arranged nicely */}
+        <div className="mb-20">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl md:text-5xl font-bold text-white mb-4 tracking-tight">
+              Our Impact in Action
+            </h2>
+            <div className="w-32 h-1 bg-yellow-400 mx-auto"></div>
+          </div>
+          
+          {/* Responsive Grid: 3 columns on large, 2 on medium, 1 on small */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* Large featured image - spans 2 columns on large screens */}
+            <div className="md:col-span-2 lg:col-span-2 relative h-[400px] rounded-xl overflow-hidden shadow-xl border-2 border-blue-700/50 group hover:scale-[1.02] transition-transform duration-300">
+              <Image
+                src="/donation1.jpg"
+                alt="HopeForUA Impact"
+                fill
+                className="object-cover"
+                priority
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+            </div>
+            
+            {/* Two smaller images stacked */}
+            <div className="space-y-6">
+              <div className="relative h-[190px] rounded-xl overflow-hidden shadow-xl border-2 border-blue-700/50 group hover:scale-[1.02] transition-transform duration-300">
+                <Image
+                  src="/donation2.jpg"
+                  alt="HopeForUA Impact"
+                  fill
+                  className="object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+              </div>
+              <div className="relative h-[190px] rounded-xl overflow-hidden shadow-xl border-2 border-blue-700/50 group hover:scale-[1.02] transition-transform duration-300">
+                <Image
+                  src="/donation3.jpg"
+                  alt="HopeForUA Impact"
+                  fill
+                  className="object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+              </div>
+            </div>
+            
+            {/* Two more images in a row */}
+            <div className="relative h-[300px] rounded-xl overflow-hidden shadow-xl border-2 border-blue-700/50 group hover:scale-[1.02] transition-transform duration-300">
+              <Image
+                src="/donation4.jpg"
+                alt="HopeForUA Impact"
+                fill
+                className="object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+            </div>
+            
+            <div className="relative h-[300px] rounded-xl overflow-hidden shadow-xl border-2 border-blue-700/50 group hover:scale-[1.02] transition-transform duration-300">
+              <Image
+                src="/donation5.jpg"
+                alt="HopeForUA Impact"
+                fill
+                className="object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+            </div>
+          </div>
         </div>
 
         {/* Large Quote Section - Small accent with light blue */}
