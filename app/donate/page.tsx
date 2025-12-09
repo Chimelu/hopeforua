@@ -21,6 +21,15 @@ interface Project {
   status: 'active' | 'completed';
 }
 
+interface Donation {
+  _id: string;
+  name: string;
+  amount: number;
+  paymentMethod: string;
+  message?: string;
+  createdAt: string;
+}
+
 function DonatePageContent() {
   const searchParams = useSearchParams();
   const projectId = searchParams.get('project');
@@ -39,6 +48,10 @@ function DonatePageContent() {
     phone: '',
     message: '',
   });
+  const [showDonorsModal, setShowDonorsModal] = useState(false);
+  const [donorsList, setDonorsList] = useState<Donation[]>([]);
+  const [loadingDonors, setLoadingDonors] = useState(false);
+  const [projectForDonors, setProjectForDonors] = useState<Project | null>(null);
 
   useEffect(() => {
     // Fetch projects from API
@@ -136,6 +149,29 @@ function DonatePageContent() {
     setTimeout(() => {
       document.getElementById('donation-form')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 100);
+  };
+
+  const handleViewDonors = async (project: Project, e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent card click from triggering
+    setProjectForDonors(project);
+    setLoadingDonors(true);
+    setShowDonorsModal(true);
+    
+    try {
+      const response = await fetch(`/api/projects/${project._id}/donations`);
+      const data = await response.json();
+      if (data.donations) {
+        setDonorsList(data.donations);
+      } else {
+        setDonorsList([]);
+      }
+    } catch (error) {
+      console.error('Error fetching donors:', error);
+      toast.error('Failed to load donors');
+      setDonorsList([]);
+    } finally {
+      setLoadingDonors(false);
+    }
   };
 
   const handleGeneralDonate = () => {
@@ -733,12 +769,23 @@ function DonatePageContent() {
                         {progress.toFixed(0)}% funded
                       </div>
                     </div>
-                    <button
-                      onClick={() => handleProjectSelect(project)}
-                      className="block w-full bg-yellow-400 hover:bg-yellow-500 text-gray-900 text-center py-3 rounded-lg font-bold transition-all shadow-lg hover:shadow-xl transform hover:scale-105"
-                    >
-                      Donate Now
-                    </button>
+                    <div className="flex gap-3">
+                      <button
+                        onClick={() => handleProjectSelect(project)}
+                        className="flex-1 bg-yellow-400 hover:bg-yellow-500 text-gray-900 text-center py-3 rounded-lg font-bold transition-all shadow-lg hover:shadow-xl transform hover:scale-105"
+                      >
+                        Donate Now
+                      </button>
+                      <button
+                        onClick={(e) => handleViewDonors(project, e)}
+                        className="bg-blue-700 hover:bg-blue-600 text-white text-center py-3 px-4 rounded-lg font-semibold transition-all shadow-lg hover:shadow-xl transform hover:scale-105"
+                        title="View Donors"
+                      >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                        </svg>
+                      </button>
+                    </div>
                   </div>
                 </div>
               );
@@ -762,6 +809,96 @@ function DonatePageContent() {
           </button>
         </div>
       </div>
+
+      {/* Donors Modal */}
+      {showDonorsModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" onClick={() => setShowDonorsModal(false)}>
+          <div className="bg-blue-800/95 backdrop-blur-md rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden border border-blue-700/50" onClick={(e) => e.stopPropagation()}>
+            {/* Modal Header */}
+            <div className="bg-blue-900/60 p-6 border-b border-blue-700/50">
+              <div className="flex justify-between items-start">
+                <div>
+                  <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">
+                    {projectForDonors?.title}
+                  </h2>
+                  <p className="text-blue-200 text-sm">People who have donated to this project</p>
+                </div>
+                <button
+                  onClick={() => setShowDonorsModal(false)}
+                  className="text-white hover:text-yellow-400 transition-colors p-2 hover:bg-blue-700/50 rounded-lg"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            {/* Modal Content */}
+            <div className="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
+              {loadingDonors ? (
+                <div className="text-center py-12">
+                  <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-yellow-400"></div>
+                  <p className="text-blue-200 mt-4">Loading donors...</p>
+                </div>
+              ) : donorsList.length === 0 ? (
+                <div className="text-center py-12">
+                  <svg className="w-16 h-16 mx-auto text-blue-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                  </svg>
+                  <p className="text-blue-200 text-lg font-semibold">No donors yet</p>
+                  <p className="text-blue-300 text-sm mt-2">Be the first to support this project!</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <div className="mb-6 p-4 bg-blue-900/50 rounded-lg border border-blue-700/50">
+                    <p className="text-blue-200 text-sm">
+                      <span className="font-bold text-yellow-400">{donorsList.length}</span> {donorsList.length === 1 ? 'person has' : 'people have'} donated to this project
+                    </p>
+                  </div>
+                  <div className="grid gap-4">
+                    {donorsList.map((donation) => (
+                      <div
+                        key={donation._id}
+                        className="bg-blue-900/40 backdrop-blur-sm rounded-lg p-5 border border-blue-700/50 hover:border-yellow-400/50 transition-all"
+                      >
+                        <div className="flex justify-between items-start mb-3">
+                          <div className="flex items-center gap-3">
+                            <div className="w-12 h-12 bg-yellow-400/20 rounded-full flex items-center justify-center">
+                              <span className="text-yellow-400 font-bold text-lg">
+                                {donation.name.charAt(0).toUpperCase()}
+                              </span>
+                            </div>
+                            <div>
+                              <h3 className="text-white font-semibold text-lg">{donation.name}</h3>
+                              <p className="text-blue-300 text-xs capitalize">{donation.paymentMethod}</p>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-yellow-400 font-bold text-xl">{formatCurrency(donation.amount)}</p>
+                            <p className="text-blue-300 text-xs mt-1">
+                              {new Date(donation.createdAt).toLocaleDateString('en-US', {
+                                year: 'numeric',
+                                month: 'short',
+                                day: 'numeric'
+                              })}
+                            </p>
+                          </div>
+                        </div>
+                        {donation.message && (
+                          <div className="mt-3 pt-3 border-t border-blue-700/50">
+                            <p className="text-blue-200 text-sm italic">"{donation.message}"</p>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
