@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useState } from 'react';
 import DonationCounter from './DonationCounter';
 
@@ -24,8 +25,15 @@ export default function Navigation() {
           <div className="flex justify-between items-center h-16">
             {/* Logo on Left */}
             <div className="flex-shrink-0">
-              <Link href="/" className="text-2xl md:text-3xl font-bold tracking-tight">
-                HopeForUA
+              <Link href="/" className="flex items-center">
+                <Image
+                  src="/image.png"
+                  alt="HopeForUA Logo"
+                  width={60}
+                  height={60}
+                  className="object-contain"
+                  priority
+                />
               </Link>
             </div>
 
